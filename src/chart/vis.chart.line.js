@@ -7,7 +7,9 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, $ */
 
-var Line = function () {
+vis.chart.Line = function (options) {
     "use strict";
-    //TODO
+    vis.chart.Base.apply(this, [options]); 
 };
+
+vis.chart.Line.prototype = Object.create(vis.chart.Base.prototype);

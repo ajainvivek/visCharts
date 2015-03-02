@@ -7,8 +7,10 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, $ */
 
-var Column = function () {
+vis.chart.Column = function (options) {
     "use strict";
-    //TODO
+    vis.chart.Base.apply(this, [options]); 
 };
+
+vis.chart.Column.prototype = Object.create(vis.chart.Base.prototype);
 
