@@ -9,10 +9,24 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Line Chart Demo</title>
-	<link rel="stylesheet" href="../dist/style.css">
-	<script type="text/javascript" src="../dist/visCharts.js"></script>
+	<!-- Include Stylesheets -->
+	<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="../dist/visCharts.css">	
 </head>
 <body>
-	<h1>Demo</h1>
+	<div id="line-chart">
+		
+	</div>
+	<!-- Include Scripts -->
+	<script type="text/javascript" src="../bower_components/d3/d3.js"></script>
+	<script type="text/javascript" src="../bower_components/lodash/lodash.js"></script>
+	<script type="text/javascript" src="../dist/visCharts.js"></script>
+	<script>
+		var ele = document.getElementById("line-chart");
+		var line = new vis.chart.Line('my-line-chart', {
+			width: "200px",
+			height: "200px"
+		}).injectAt(ele);
+	</script>
 </body>
 </html>

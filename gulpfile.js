@@ -10,7 +10,7 @@ var gulp = require('gulp'),
 
 //Build Scripts
 gulp.task('scripts', function () {
-  gulp.src(['src/vis.namespace.js', 'src/vis.config.js', 'src/utility/*.js', 'src/core/*.js', 'src/data/*.js', 'src/chart/*.js'])
+  gulp.src(['src/vis.namespace.js', 'src/vis.config.js', 'src/core/*.js', 'src/data/*.js', 'src/chart/*.js'])
     .pipe(plumber())
     .pipe(concat('visCharts.js'))
     .pipe(gulp.dest('dist'));
@@ -29,9 +29,10 @@ gulp.task('less', function () {
     .pipe(plumber())
     .pipe(less())
     .pipe(autoprefixer())
+    .pipe(rename('visCharts.css'))
     .pipe(gulp.dest('dist'))
     .pipe(minifyCSS())
-    .pipe(rename('style.min.css'))
+    .pipe(rename('visCharts.min.css'))
     .pipe(gulp.dest('dist'));
 });
 
