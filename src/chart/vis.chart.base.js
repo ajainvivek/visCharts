@@ -52,6 +52,7 @@ vis.chart.Base = function (id, options) {
     this.injectAt = function (ele) {
         var content = this.getContent();
         ele.appendChild(content);
+        return this;
     };
 
     /***
@@ -72,5 +73,11 @@ vis.chart.Base = function (id, options) {
         });
 
         this._setContent(content);
+
+        options.dataset.then(function (d) {
+            console.log(d);
+        }, function (e) {
+            console.log(e);
+        });
     };
 };

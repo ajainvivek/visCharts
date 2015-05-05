@@ -27,27 +27,35 @@
  */
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define, $, vis */
+/*global define, $, vis, d3 */
 
 vis.chart.api.construct = (function () {
     var wrapper = function (options) {
-        var div = document.createElement('div');
-        var svg = document.createElement('svg');
-        var canvas = document.createElement('canvas');
 
-        div.setAttribute('id', options.id);
-        div.setAttribute('class', 'vis-wrapper');
-        div.style.height = options.height;
-        div.style.width = options.width;
+        var container = d3.select(document.createElement("div"));
+        container.attr('id', options.id);
+        container.attr('class', 'vis-wrapper');
+        container.style({
+            height: options.height,
+            width: options.width,
+            position: "relative"
+        });
 
-        svg.setAttribute('class', 'vis-root');
-        svg.setAttribute('height', parseInt(options.height, 10));
-        svg.setAttribute('width', parseInt(options.width, 10));
+        container.append("canvas");
 
-        div.appendChild(canvas);
-        div.appendChild(svg);
+        container.append("svg")
+            .attr("class", "vis-root")
+            .attr("height", parseInt(options.height, 10))
+            .attr("width", parseInt(options.width, 10))
+            .style({
+                position: "absolute",
+                left: 0,
+                top: 0
+            })
+            .append("g")
+            .attr("vis-main");
 
-        return div;
+        return container.node();
     };
 
     return {
@@ -63,14 +71,82 @@ vis.chart.api.construct = (function () {
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, $ */
 
+/**
+ * Interactive Visualisation Charts (c) 2015 Ajain Vivek
+ *
+ * Licensed under MIT
+ */
+
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global require, define, brackets: true, $, window, document, navigator*/
+/*global define, $, vis, window */
+
+vis.promise = (function () {
+    var Promise = function () {
+        this.successCallbacks = [];
+        this.failCallbacks = [];
+    };
+
+    Promise.prototype = {
+        successCallbacks: null,
+        failCallbacks: null,
+        then: function (successCallback, failCallback) {
+            this.successCallbacks.push(successCallback);
+            if (failCallback) {
+                this.failCallbacks.push(failCallback);
+            }
+        }
+    };
+
+    var Defer = function () {
+        this.promise = new Promise();
+    };
+
+    Defer.prototype = {
+        promise: null,
+        resolve: function (data) {
+            this.promise.successCallbacks.forEach(function (callback) {
+                window.setTimeout(function () {
+                    callback(data);
+                }, 0);
+            });
+        },
+
+        reject: function (error) {
+            this.promise.failCallbacks.forEach(function (callback) {
+                window.setTimeout(function () {
+                    callback(error);
+                }, 0);
+            });
+        }
+    };
+
+    return {
+        Defer: Defer,
+        Promise: Promise
+    };
+}());
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
+/*global require, define, d3, vis, brackets: true, $, window, document, navigator*/
 
 /**
  * Interactive Visualisation Charts (c) 2015 Ajain Vivek
  *
  * Licensed under MIT
  */
+
+vis.data.Flattened = function (options) {
+    "use strict";
+    var defer = new vis.promise.Defer();
+    if (options.data.type === "json") {
+        d3.json(options.data.url, function (error, json) {
+            if (error) {
+                return defer.reject(error);
+            }
+            defer.resolve(json);
+        });
+    }
+    return defer.promise;
+};
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global require, define, arguments, vis, brackets: true, $, window, document, navigator*/
 
@@ -125,6 +201,7 @@ vis.chart.Base = function (id, options) {
     this.injectAt = function (ele) {
         var content = this.getContent();
         ele.appendChild(content);
+        return this;
     };
 
     /***
@@ -145,6 +222,12 @@ vis.chart.Base = function (id, options) {
         });
 
         this._setContent(content);
+
+        options.dataset.then(function (d) {
+            console.log(d);
+        }, function (e) {
+            console.log(e);
+        });
     };
 };
 /**

@@ -3,7 +3,6 @@
  * Line Chart Demo
  * Licensed under MIT
 -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,9 +22,31 @@
 	<script type="text/javascript" src="../dist/visCharts.js"></script>
 	<script>
 		var ele = document.getElementById("line-chart");
+		var dataset = new vis.data.Flattened({
+	        dimensions: [{
+	            axis: 1,
+	            name: 'Country',
+	            value: "{country}"
+	        }],
+	        measures: [{
+	            name: 'Revenue',
+	            value: {
+	                path: 'revenue',
+	                formatter: function ($) {
+	                    return 2 * $;
+	                }
+	            }
+	        }],
+	        data: {
+	            path: "/data",
+	            type: "json",
+	            url: 'businessData.json'
+	        }
+	    });
 		var line = new vis.chart.Line('my-line-chart', {
-			width: "200px",
-			height: "200px"
+			width: "600px",
+			height: "270px",
+			dataset: dataset
 		}).injectAt(ele);
 	</script>
 </body>
