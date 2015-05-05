@@ -26,7 +26,7 @@
 	        dimensions: [{
 	            axis: 1,
 	            name: 'Country',
-	            value: "{country}"
+	            value: "country"
 	        }],
 	        measures: [{
 	            name: 'Revenue',
@@ -38,9 +38,9 @@
 	            }
 	        }],
 	        data: {
+	            url: 'businessData.json',
 	            path: "/data",
-	            type: "json",
-	            url: 'businessData.json'
+	            type: "json"
 	        }
 	    });
 		var line = new vis.chart.Line('my-line-chart', {

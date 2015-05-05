@@ -97,11 +97,11 @@ vis.promise = (function () {
         }
     };
 
-    var Defer = function () {
+    var Deferred = function () {
         this.promise = new Promise();
     };
 
-    Defer.prototype = {
+    Deferred.prototype = {
         promise: null,
         resolve: function (data) {
             this.promise.successCallbacks.forEach(function (callback) {
@@ -121,7 +121,7 @@ vis.promise = (function () {
     };
 
     return {
-        Defer: Defer,
+        Deferred: Deferred,
         Promise: Promise
     };
 }());
@@ -136,16 +136,46 @@ vis.promise = (function () {
 
 vis.data.Flattened = function (options) {
     "use strict";
-    var defer = new vis.promise.Defer();
-    if (options.data.type === "json") {
+    var deffered = new vis.promise.Deferred();
+
+    var callback = function (error, json) {
+        var path = _.compact(callback.options.data.path.split('/'));
+        var data = _.get(json, path);
+        var measures = _.forEach(callback.options.measures, function (measure) { //Get Measure Values
+            var mPath = (typeof measure.value === "object") ? _.compact(measure.value.path.split('/')) : measure.value;
+            var mData = _.pluck(data, mPath);
+            measure.value = mData;
+            return measure;
+        });
+        var dimensions = _.forEach(callback.options.dimensions, function (dimension) { // Get Dimension Values
+            var dPath = (typeof dimension.value === "object") ? _.compact(dimension.value.path.split('/')) : dimension.value;
+            var dData = _.pluck(data, dPath) || [];
+            dimension.value = _.uniq(dData);
+            return dimension;
+        });
+        var dataset = {
+            measures: measures,
+            dimensions: dimensions
+        };
+        if (error) {
+            return deffered.reject(error);
+        }
+        deffered.resolve(dataset);
+    };
+    callback.options = options;
+
+    if (options.data.value) { //Plain JSON object
+        callback(null, options.data.value);
+    } else if (options.data.type === "json") { //GET Request for JSON Object
         d3.json(options.data.url, function (error, json) {
-            if (error) {
-                return defer.reject(error);
-            }
-            defer.resolve(json);
+            callback(error, json);
+        });
+    } else if (options.data.type === "csv") {
+        d3.csv(options.data.url, function (error, json) { //GET CSV File Object
+            callback(error, json);
         });
     }
-    return defer.promise;
+    return deffered.promise;
 };
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global require, define, arguments, vis, brackets: true, $, window, document, navigator*/

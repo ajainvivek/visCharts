@@ -24,11 +24,11 @@ vis.promise = (function () {
         }
     };
 
-    var Defer = function () {
+    var Deferred = function () {
         this.promise = new Promise();
     };
 
-    Defer.prototype = {
+    Deferred.prototype = {
         promise: null,
         resolve: function (data) {
             this.promise.successCallbacks.forEach(function (callback) {
@@ -48,7 +48,7 @@ vis.promise = (function () {
     };
 
     return {
-        Defer: Defer,
+        Deferred: Deferred,
         Promise: Promise
     };
 }());
