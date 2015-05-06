@@ -81,11 +81,13 @@ vis.chart.api.construct = (function () {
 /*global define, $, vis, window */
 
 vis.promise = (function () {
+    //Promise Constructor Method
     var Promise = function () {
         this.successCallbacks = [];
         this.failCallbacks = [];
     };
 
+    //Extend Constructor Method
     Promise.prototype = {
         successCallbacks: null,
         failCallbacks: null,
@@ -97,10 +99,12 @@ vis.promise = (function () {
         }
     };
 
+    //Deferred Constructor Method
     var Deferred = function () {
         this.promise = new Promise();
     };
 
+    //Extend Constructor Method
     Deferred.prototype = {
         promise: null,
         resolve: function (data) {
