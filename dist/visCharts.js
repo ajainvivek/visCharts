@@ -148,12 +148,24 @@ vis.data.Flattened = function (options) {
         var measures = _.forEach(callback.options.measures, function (measure) { //Get Measure Values
             var mPath = (typeof measure.value === "object") ? _.compact(measure.value.path.split('/')) : measure.value;
             var mData = _.pluck(data, mPath);
+            //Formatter to iterate and format the values
+            if (typeof measure.value.formatter === "function") {
+                mData = _.transform(mData, function (result, value) {
+                    result.push(measure.value.formatter(value));
+                });
+            }
             measure.value = mData;
             return measure;
         });
         var dimensions = _.forEach(callback.options.dimensions, function (dimension) { // Get Dimension Values
             var dPath = (typeof dimension.value === "object") ? _.compact(dimension.value.path.split('/')) : dimension.value;
             var dData = _.pluck(data, dPath) || [];
+            //Formatter to iterate and format the values
+            if (typeof dimension.value.formatter === "function") {
+                dData = _.transform(dData, function (result, value) {
+                    result.push(dimension.value.formatter(value));
+                });
+            }
             dimension.value = _.uniq(dData);
             return dimension;
         });
